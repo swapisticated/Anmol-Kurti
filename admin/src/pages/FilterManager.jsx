@@ -44,7 +44,7 @@ const FilterManager = () => {
     { value: 'range', label: 'Range', desc: 'Slider or input range' }
   ];
 
-  const productCategories = ['Sarees', 'Kurtis', 'Suits', 'Shirts', 'Pants', 'Dress', 'Salwars',"Sets"];
+  const productCategories = ['Rings', 'Necklaces', 'Earrings', 'Bracelets', 'Bangles', 'Pendants', 'Nose Pins', 'Anklets', 'Sets'];
 
   // Filter and search logic
   const filteredFilters = useMemo(() => {

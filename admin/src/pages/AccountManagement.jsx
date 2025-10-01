@@ -1223,7 +1223,7 @@ const AccountManagement = ({ token }) => {
                         View Details
                       </button>
                       {/* Only show delete button if not the super admin */}
-                      {customer.email !== "admin@anmolkurtis.com" && (
+                      {customer.email !== "prince83w@gmail.com" && (
                         <button
                           onClick={() => {
                             if (window.confirm('Are you sure you want to delete this customer? This action cannot be undone.')) {
@@ -1236,7 +1236,7 @@ const AccountManagement = ({ token }) => {
                         </button>
                       )}
                       {/* Show protected message for super admin */}
-                      {customer.email === "admin@anmolkurtis.com" && (
+                      {customer.email === "prince83w@gmail.com" && (
                         <span className="text-gray-400 text-sm italic">
                           Super Admin (Protected)
                         </span>

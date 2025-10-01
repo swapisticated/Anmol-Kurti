@@ -21,11 +21,16 @@ function joinUrl(base, path) {
   return base + path;
 }
 
+// Safely resolve backend base URL: use VITE_BACKEND_URL when provided, otherwise fallback to current origin
+const resolvedBase = (typeof rawBackendUrl === 'string' && rawBackendUrl.length > 0)
+  ? rawBackendUrl.replace(/\/$/, '')
+  : window.location.origin;
+
 export const backendUrl = {
-  base: rawBackendUrl.replace(/\/$/, ''), // remove trailing slash if any
-  join: (path) => joinUrl(rawBackendUrl.replace(/\/$/, ''), path)
+  base: resolvedBase,
+  join: (path) => joinUrl(resolvedBase, path)
 };
-export const currency = '$'
+export const currency = '₹'
 
 const App = () => {
 

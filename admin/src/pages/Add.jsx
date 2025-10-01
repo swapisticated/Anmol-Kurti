@@ -30,12 +30,24 @@ console.log('token',token )
     name: '',
     description: '',
     price: 0,
-    gender: '',
     category: '',
+    subCategory: '',
+    collection: '',
     bestseller: false,
     sizes: [],
     stock: {},
-    hasSize: true,
+    hasSize: false,
+    // Jewelry specifics
+    sku: '',
+    metalType: '',
+    metalPurity: '',
+    metalWeight: '',
+    stoneType: '',
+    stoneWeight: '',
+    makingCharges: '',
+    hallmark: true,
+    certification: '',
+    dimensions: { length: '', width: '', height: '' },
     // Dynamic object to store all filter values
     filterValues: {}
   });
@@ -128,7 +140,6 @@ console.log('token',token )
         break;
       }
       case 3: {
-        if (!formData.gender) stepErrors.gender = 'Gender is required';
         if (!formData.category) stepErrors.category = 'Category is required';
         break;
       }
@@ -156,7 +167,6 @@ console.log('token',token )
       delete mergedErrors.name;
       delete mergedErrors.description;
     } else if (step === 3) {
-      delete mergedErrors.gender;
       delete mergedErrors.category;
     } else if (step === 4) {
       delete mergedErrors.price;
@@ -181,16 +191,19 @@ console.log('token',token )
     }
   };
 
-  // Get available categories based on gender
+  // Jewelry categories (static for now)
   const getAvailableCategories = () => {
-    if (formData.gender === "Women") {
-      return ["Sarees", "Kurtis", "Dress", "Salwars", "Sets"];
-    } else if (formData.gender === "Men") {
-      return ["Shirts", "Pants", "Suits", "Sets"];
-    } else if (formData.gender === "Children") {
-      return ["Suits", "Dress", "Sets"];
-    }
-    return [];
+    return [
+      "Rings",
+      "Necklaces",
+      "Earrings",
+      "Bracelets",
+      "Bangles",
+      "Pendants",
+      "Nose Pins",
+      "Anklets",
+      "Sets"
+    ];
   };
 
   // Get filter options with fallbacks
@@ -334,15 +347,24 @@ console.log('token',token )
       formDataToSend.append("name", String(formData.name).trim());
       formDataToSend.append("description", String(formData.description).trim());
       formDataToSend.append("price", String(parseFloat(formData.price) || 0));
-      formDataToSend.append("gender", String(formData.gender));
       formDataToSend.append("category", String(formData.category));
+      formDataToSend.append("subCategory", String(formData.subCategory || ''));
+      formDataToSend.append("collection", String(formData.collection || ''));
       formDataToSend.append("bestseller", String(Boolean(formData.bestseller)));
       formDataToSend.append("hasSize", String(Boolean(formData.hasSize)));
       formDataToSend.append("sizes", JSON.stringify(formData.hasSize ? formData.sizes : []));
 
-      // Include known dynamic filters (safe access)
-      formDataToSend.append("occasion", JSON.stringify(formData.filterValues?.occasion || []));
-      formDataToSend.append("type", JSON.stringify(formData.filterValues?.type || []));
+      // Jewelry specific fields
+      formDataToSend.append("sku", String(formData.sku || ''));
+      formDataToSend.append("metalType", String(formData.metalType || ''));
+      formDataToSend.append("metalPurity", String(formData.metalPurity || ''));
+      formDataToSend.append("metalWeight", String(formData.metalWeight || ''));
+      formDataToSend.append("stoneType", String(formData.stoneType || ''));
+      formDataToSend.append("stoneWeight", String(formData.stoneWeight || ''));
+      formDataToSend.append("makingCharges", String(formData.makingCharges || ''));
+      formDataToSend.append("hallmark", String(Boolean(formData.hallmark)));
+      formDataToSend.append("certification", String(formData.certification || ''));
+      formDataToSend.append("dimensions", JSON.stringify(formData.dimensions || { length: 0, width: 0, height: 0 }));
 
       // Add all filter values as a combined filters object
       const allFilterValues = { ...(formData.filterValues || {}) };
@@ -385,12 +407,23 @@ console.log('token',token )
           name: '',
           description: '',
           price: 0,
-          gender: '',
           category: '',
+          subCategory: '',
+          collection: '',
           bestseller: false,
           sizes: [],
           stock: {},
-          hasSize: true,
+          hasSize: false,
+          sku: '',
+          metalType: '',
+          metalPurity: '',
+          metalWeight: '',
+          stoneType: '',
+          stoneWeight: '',
+          makingCharges: '',
+          hallmark: true,
+          certification: '',
+          dimensions: { length: '', width: '', height: '' },
           filterValues: {}
         });
         setImages([null, null, null, null]);
@@ -540,6 +573,63 @@ console.log('token',token )
                     }`}
                 />
               </div>
+
+              {/* Jewelry specific fields */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+                <input type="text" value={formData.sku} onChange={e => handleInputChange('sku', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="Optional SKU" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Collection</label>
+                <input type="text" value={formData.collection} onChange={e => handleInputChange('collection', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="e.g., Bridal, Daily Wear" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Metal Type</label>
+                <input type="text" value={formData.metalType} onChange={e => handleInputChange('metalType', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="Gold, Silver, Platinum" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Metal Purity</label>
+                <input type="text" value={formData.metalPurity} onChange={e => handleInputChange('metalPurity', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="22K, 18K, 925" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Metal Weight (grams)</label>
+                <input type="number" value={formData.metalWeight} onChange={e => handleInputChange('metalWeight', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="e.g., 7.5" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Stone Type</label>
+                <input type="text" value={formData.stoneType} onChange={e => handleInputChange('stoneType', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="Diamond, CZ, Ruby" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Stone Weight (carats)</label>
+                <input type="number" value={formData.stoneWeight} onChange={e => handleInputChange('stoneWeight', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="e.g., 0.5" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Making Charges (₹)</label>
+                <input type="number" value={formData.makingCharges} onChange={e => handleInputChange('makingCharges', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="e.g., 1200" />
+              </div>
+              <div className="flex items-center gap-3">
+                <input type="checkbox" checked={formData.hallmark} onChange={e => handleInputChange('hallmark', e.target.checked)} />
+                <label className="text-sm font-medium text-gray-700">Hallmark Certified</label>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Certification</label>
+                <input type="text" value={formData.certification} onChange={e => handleInputChange('certification', e.target.value)} className="w-full px-4 py-3 border rounded-lg" placeholder="e.g., IGI, SGL" />
+              </div>
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Length (mm)</label>
+                  <input type="number" value={formData.dimensions.length} onChange={e => handleInputChange('dimensions', { ...formData.dimensions, length: e.target.value })} className="w-full px-4 py-3 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Width (mm)</label>
+                  <input type="number" value={formData.dimensions.width} onChange={e => handleInputChange('dimensions', { ...formData.dimensions, width: e.target.value })} className="w-full px-4 py-3 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Height (mm)</label>
+                  <input type="number" value={formData.dimensions.height} onChange={e => handleInputChange('dimensions', { ...formData.dimensions, height: e.target.value })} className="w-full px-4 py-3 border rounded-lg" />
+                </div>
+              </div>
+
             </div>
           </div>
         );
@@ -555,28 +645,6 @@ console.log('token',token )
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Gender <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={formData.gender}
-                  onChange={(e) => {
-                    handleInputChange('gender', e.target.value);
-                    handleInputChange('category', '');
-                  }}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.gender
-                    ? 'border-red-300 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-blue-500'
-                    }`}
-                >
-                  <option value="">Select Gender</option>
-                  {getFilterOptions('gender').map(g => (
-                    <option key={g} value={g}>{g}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Category <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -584,12 +652,9 @@ console.log('token',token )
                   onChange={(e) => {
                     handleInputChange('category', e.target.value);
                   }}
-                  disabled={!formData.gender}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${!formData.gender
-                    ? 'bg-gray-100 cursor-not-allowed'
-                    : errors.category
-                      ? 'border-red-300 focus:ring-red-500'
-                      : 'border-gray-300 focus:ring-blue-500'
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.category
+                    ? 'border-red-300 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-blue-500'
                     }`}
                 >
                   <option value="">Select Category</option>
